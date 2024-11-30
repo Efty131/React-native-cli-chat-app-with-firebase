@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import auth from '@react-native-firebase/auth';
+import "./global.css"
 
 // Import Screens
 import Login from './src/Login';
@@ -26,6 +28,7 @@ const App = () => {
 
   return (
     <NavigationContainer>
+      <StatusBar hidden={true} translucent={true} barStyle={'dark-content'} />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {user ? (
           <Stack.Screen name="Tabs" component={Tabs} />
