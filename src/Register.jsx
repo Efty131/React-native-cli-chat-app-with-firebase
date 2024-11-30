@@ -44,10 +44,12 @@ const Register = ({ navigation }) => {
   const handleGoogleRegister = async () => {
     try {
       // Check if the device supports Google Play services
-      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      await GoogleSignin.hasPlayServices();
+      const signInResult = await GoogleSignin.signIn();
 
-      // Google Sign-In process
-      const { idToken } = await GoogleSignin.signIn();
+      console.log('Google sign in result is:', signInResult);
+      const { idToken } = signInResult?.data || {};
+      console.log(idToken);
 
       // Create Firebase credential with the Google token
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
@@ -76,7 +78,9 @@ const Register = ({ navigation }) => {
       <TextInput
         style={styles.input}
         placeholder="Email"
+        color={'orange'}
         value={email}
+        placeholderTextColor="gray"
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
@@ -86,8 +90,10 @@ const Register = ({ navigation }) => {
       <TextInput
         style={styles.input}
         placeholder="Password"
+        color={'orange'}
         value={password}
         onChangeText={setPassword}
+        placeholderTextColor="gray"
         secureTextEntry
         autoCapitalize="none"
       />
@@ -125,16 +131,18 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: 'center',
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 20,
+    color: 'green',
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: 'green',
     borderRadius: 8,
     padding: 10,
     marginBottom: 15,
@@ -142,6 +150,7 @@ const styles = StyleSheet.create({
   loginText: {
     marginTop: 20,
     textAlign: 'center',
+    color: 'gray',
   },
   loginLink: {
     color: '#007BFF',

@@ -5,6 +5,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 GoogleSignin.configure({
   webClientId: '1061462327779-3sn2qp7te1tceqsjhu78qp2qqg83igdr.apps.googleusercontent.com',
+  offlineAccess: true,
 });
 
 const LoginScreen = ({ navigation }) => {
@@ -27,12 +28,16 @@ const LoginScreen = ({ navigation }) => {
   const handleGoogleLogin = async () => {
     try {
       await GoogleSignin.hasPlayServices();
-      const { idToken } = await GoogleSignin.signIn();
+      const signInResult = await GoogleSignin.signIn();
+// ay id token niya birat jhamela hoysilo at last fix korsi 
+      console.log('Google sign in result is:', signInResult);
+      const { idToken } = signInResult?.data || {};
+      console.log(idToken);
 
       if (!idToken) {
         throw new Error('No ID token found');
       }
-
+// ay id token niya birat jhamela hoysilo at last fix korsi 
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       await auth().signInWithCredential(googleCredential);
       Alert.alert('Google Login Successful', 'You have logged in with Google');
@@ -52,6 +57,8 @@ const LoginScreen = ({ navigation }) => {
         style={styles.input}
         placeholder="Email"
         value={email}
+        color={'orange'}
+        placeholderTextColor="gray"
         onChangeText={(text) => setEmail(text)}
       />
 
@@ -60,6 +67,8 @@ const LoginScreen = ({ navigation }) => {
         style={styles.input}
         placeholder="Password"
         secureTextEntry
+        color={'orange'}
+        placeholderTextColor="gray"
         value={password}
         onChangeText={(text) => setPassword(text)}
       />
@@ -86,10 +95,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 24,
     marginBottom: 20,
+    color: 'green',
+    fontWeight: 'bold',
   },
   input: {
     width: '100%',
@@ -97,10 +109,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderWidth: 1,
     borderRadius: 5,
+    borderColor: 'green',
   },
   orText: {
     marginVertical: 10,
     fontSize: 16,
+    color: 'Gray'
   },
   registerText: {
     marginTop: 20,

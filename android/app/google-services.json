@@ -51,11 +51,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "1061462327779-bm2o8882i34cmbpcjeherdgfcm3hukts.apps.googleusercontent.com",
+          "client_id": "1061462327779-g9epatgpajn49nvtpf13fep8n6j7q6ga.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.mobilechatapp",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+            "certificate_hash": "ae8cb778e45e9159c25d0847badb10b66ed36969"
           }
         },
         {
