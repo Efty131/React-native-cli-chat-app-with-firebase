@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, Alert, StyleSheet } from 'react-native';
+import { View, TextInput, Button, Text, Alert } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
@@ -29,7 +29,6 @@ const LoginScreen = ({ navigation }) => {
     try {
       await GoogleSignin.hasPlayServices();
       const signInResult = await GoogleSignin.signIn();
-// ay id token niya birat jhamela hoysilo at last fix korsi 
       console.log('Google sign in result is:', signInResult);
       const { idToken } = signInResult?.data || {};
       console.log(idToken);
@@ -37,7 +36,7 @@ const LoginScreen = ({ navigation }) => {
       if (!idToken) {
         throw new Error('No ID token found');
       }
-// ay id token niya birat jhamela hoysilo at last fix korsi 
+
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       await auth().signInWithCredential(googleCredential);
       Alert.alert('Google Login Successful', 'You have logged in with Google');
@@ -49,26 +48,22 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+    <View className="flex-1 justify-center items-center p-4 bg-white">
+      <Text className="text-3xl font-bold mb-6 text-green-600">Login</Text>
       
       {/* Email input field */}
       <TextInput
-        style={styles.input}
+        className="w-full p-3 mb-3 border-2 border-green-600 rounded-md text-orange-500 placeholder-gray-400"
         placeholder="Email"
         value={email}
-        color={'orange'}
-        placeholderTextColor="gray"
         onChangeText={(text) => setEmail(text)}
       />
 
       {/* Password input field */}
       <TextInput
-        style={styles.input}
+        className="w-full p-3 mb-3 border-2 border-green-600 rounded-md text-orange-500 placeholder-gray-400"
         placeholder="Password"
         secureTextEntry
-        color={'orange'}
-        placeholderTextColor="gray"
         value={password}
         onChangeText={(text) => setPassword(text)}
       />
@@ -76,51 +71,20 @@ const LoginScreen = ({ navigation }) => {
       {/* Email login button */}
       <Button title="Login with Email" onPress={handleEmailLogin} />
 
-      <Text style={styles.orText}>OR</Text>
+      <Text className="my-4 text-lg text-gray-500">OR</Text>
 
       {/* Google login button */}
       <Button title="Login with Google" onPress={handleGoogleLogin} />
 
       {/* Navigation to Register screen */}
-      <Text style={styles.registerText} onPress={() => navigation.navigate('Register')}>
+      <Text
+        className="mt-4 text-blue-500 underline"
+        onPress={() => navigation.navigate('Register')}
+      >
         Don't have an account? Register here
       </Text>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-    color: 'green',
-    fontWeight: 'bold',
-  },
-  input: {
-    width: '100%',
-    padding: 12,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderRadius: 5,
-    borderColor: 'green',
-  },
-  orText: {
-    marginVertical: 10,
-    fontSize: 16,
-    color: 'Gray'
-  },
-  registerText: {
-    marginTop: 20,
-    color: 'blue',
-    textDecorationLine: 'underline',
-  },
-});
 
 export default LoginScreen;

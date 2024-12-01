@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, Alert } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 GoogleSignin.configure({
-    webClientId: '1061462327779-3sn2qp7te1tceqsjhu78qp2qqg83igdr.apps.googleusercontent.com',
+  webClientId: '1061462327779-3sn2qp7te1tceqsjhu78qp2qqg83igdr.apps.googleusercontent.com',
 });
 
 const Register = ({ navigation }) => {
@@ -71,16 +71,14 @@ const Register = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Register</Text>
+    <View className="flex-1 p-5 justify-center bg-white">
+      <Text className="text-3xl font-bold text-center mb-6 text-green-600">Register</Text>
 
       {/* Email Input */}
       <TextInput
-        style={styles.input}
+        className="w-full p-3 mb-4 border-2 border-green-600 rounded-lg text-orange-500 placeholder-gray-400"
         placeholder="Email"
-        color={'orange'}
         value={email}
-        placeholderTextColor="gray"
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
@@ -88,12 +86,10 @@ const Register = ({ navigation }) => {
 
       {/* Password Input */}
       <TextInput
-        style={styles.input}
+        className="w-full p-3 mb-4 border-2 border-green-600 rounded-lg text-orange-500 placeholder-gray-400"
         placeholder="Password"
-        color={'orange'}
         value={password}
         onChangeText={setPassword}
-        placeholderTextColor="gray"
         secureTextEntry
         autoCapitalize="none"
       />
@@ -113,10 +109,10 @@ const Register = ({ navigation }) => {
       />
 
       {/* Navigate to Login */}
-      <Text style={styles.loginText}>
+      <Text className="mt-5 text-center text-gray-500">
         Already have an account?{' '}
         <Text
-          style={styles.loginLink}
+          className="text-blue-500 underline"
           onPress={() => navigation.navigate('Login')}
         >
           Log In
@@ -125,36 +121,5 @@ const Register = ({ navigation }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
-    color: 'green',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: 'green',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 15,
-  },
-  loginText: {
-    marginTop: 20,
-    textAlign: 'center',
-    color: 'gray',
-  },
-  loginLink: {
-    color: '#007BFF',
-  },
-});
 
 export default Register;
