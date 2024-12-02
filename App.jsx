@@ -28,7 +28,7 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      <StatusBar hidden={true} translucent={true} barStyle={'dark-content'} />
+      <StatusBar backgroundColor="rgba(0,0,0,0.2)" hidden={true} translucent={true} barStyle={'dark-content'} />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {user ? (
           <Stack.Screen name="Tabs" component={Tabs} />

@@ -19,7 +19,7 @@ const Tabs = () => {
           if (route.name === 'Chats') {
             iconName = focused ? 'chatbubbles' : 'chatbubbles-outline';
           } else if (route.name === 'Discover') {
-            iconName = focused ? 'search' : 'search-outline';
+            iconName = focused ? 'globe' : 'globe-outline';
           } else if (route.name === 'Profile') {
             iconName = focused ? 'person' : 'person-outline';
           }
@@ -28,14 +28,13 @@ const Tabs = () => {
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         headerShown: false,
-      })}
-      tabBarOptions={{
-        activeTintColor: 'tomato', // Active tab color
-        inactiveTintColor: 'gray', // Inactive tab color
-        style: {
+        tabBarActiveTintColor: '#008744', // Active tab text/icon color
+        tabBarInactiveTintColor: 'gray', // Inactive tab text/icon color
+        tabBarActiveBackgroundColor: '', // Active tab background color
+        tabBarStyle: {
           paddingBottom: 5, // Adjust padding if needed
         },
-      }}
+      })}
     >
       <Tab.Screen name="Chats" component={Chats} />
       <Tab.Screen name="Discover" component={Discover} />

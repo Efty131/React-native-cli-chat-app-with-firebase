@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Alert } from 'react-native';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 GoogleSignin.configure({
@@ -12,6 +13,27 @@ const Register = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Save user to Firestore
+  const saveUserToFirestore = async (uid, email) => {
+    try {
+      const userDoc = await firestore().collection('users').doc(uid).get();
+
+      if (!userDoc.exists) {
+        await firestore().collection('users').doc(uid).set({
+          uid,
+          email,
+          name: '', // Placeholder for name
+          photoURL: '', // Placeholder for profile photo
+        });
+        console.log('User added to Firestore:', { uid, email });
+      } else {
+        console.log('User already exists in Firestore:', userDoc.data());
+      }
+    } catch (error) {
+      console.error('Error saving user to Firestore:', error);
+    }
+  };
+
   // Register with Email & Password
   const handleEmailPasswordRegister = async () => {
     if (!email || !password) {
@@ -21,7 +43,11 @@ const Register = ({ navigation }) => {
 
     setIsLoading(true);
     try {
-      await auth().createUserWithEmailAndPassword(email, password);
+      const userCredential = await auth().createUserWithEmailAndPassword(email, password);
+      const { uid, email: userEmail } = userCredential.user;
+
+      // Save user to Firestore
+      await saveUserToFirestore(uid, userEmail);
 
       // Send email verification
       await auth().currentUser.sendEmailVerification();
@@ -47,17 +73,23 @@ const Register = ({ navigation }) => {
       await GoogleSignin.hasPlayServices();
       const signInResult = await GoogleSignin.signIn();
 
-      console.log('Google sign in result is:', signInResult);
       const { idToken } = signInResult?.data || {};
       console.log(idToken);
+      if (!idToken) {
+        throw new Error('No ID token found');
+      }
 
       // Create Firebase credential with the Google token
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
       // Authenticate with Firebase
       const userCredential = await auth().signInWithCredential(googleCredential);
+      const { uid, email: userEmail } = userCredential.user;
 
-      Alert.alert('Success', `Welcome, ${userCredential.user.displayName}!`);
+      // Save user to Firestore
+      await saveUserToFirestore(uid, userEmail);
+
+      Alert.alert('Success', `Welcome, ${userCredential.user.displayName || 'User'}!`);
 
       // Navigate to the app
       navigation.reset({
@@ -78,6 +110,7 @@ const Register = ({ navigation }) => {
       <TextInput
         className="w-full p-3 mb-4 border-2 border-green-600 rounded-lg text-orange-500 placeholder-gray-400"
         placeholder="Email"
+        placeholderTextColor="gray"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -88,6 +121,7 @@ const Register = ({ navigation }) => {
       <TextInput
         className="w-full p-3 mb-4 border-2 border-green-600 rounded-lg text-orange-500 placeholder-gray-400"
         placeholder="Password"
+        placeholderTextColor="gray"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
