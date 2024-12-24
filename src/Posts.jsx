@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput, Button, Alert, Image } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import { useSelector } from 'react-redux';
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
@@ -9,6 +10,8 @@ const Posts = () => {
   const [commentInput, setCommentInput] = useState({});
   const [visibleCommentInputs, setVisibleCommentInputs] = useState({});
   const currentUserUid = auth().currentUser?.uid;
+
+  const isNightMode = useSelector((state) => state.theme.isNightMode);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -133,42 +136,51 @@ const Posts = () => {
     const likeCount = item.likedBy?.length || 0;
 
     return (
-      <View className="p-4 mb-3 bg-gray-100 rounded-lg shadow">
+      <View
+        className={`p-4 mb-3 rounded-lg shadow ${
+          isNightMode ? 'bg-gray-800' : 'bg-gray-100'
+        }`}
+      >
         <View className="flex-row items-center mb-2">
           <Image
             source={{ uri: item.userPhotoURL }}
             className="w-12 h-12 rounded-full mr-4"
           />
           <View>
-            <Text className="font-semibold text-gray-800">{item.userName || 'User'}</Text>
-            <Text className="text-xs text-gray-400 font-bold">
+            <Text
+              className={`font-semibold ${
+                isNightMode ? 'text-gray-100' : 'text-gray-800'
+              }`}
+            >
+              {item.userName || 'User'}
+            </Text>
+            <Text className={`text-xs font-bold ${isNightMode ? 'text-gray-400' : 'text-gray-500'}`}>
               {new Date(item.createdAt?.toDate()).toLocaleString()}
             </Text>
           </View>
         </View>
-        <Text className="text-gray-900 mb-2 font-bold">{item.content}</Text>
+        <Text className={`mb-2 ${isNightMode ? 'text-gray-200' : 'text-gray-900'}`}>
+          {item.content}
+        </Text>
         <View className="flex-row justify-between items-center mt-2">
           <TouchableOpacity
             onPress={() => handleLike(item.id, isLiked)}
-            style={{
-              backgroundColor: isLiked ? 'lightblue' : 'white',
-              borderColor: isLiked ? 'blue' : 'gray',
-              borderWidth: 1,
-              padding: 5,
-              borderRadius: 5,
-            }}
+            className={`p-2 rounded ${
+              isLiked
+                ? isNightMode
+                  ? 'bg-blue-800 border-blue-400'
+                  : 'bg-blue-100 border-blue-600'
+                : 'border-gray-400'
+            }`}
           >
-            <Text
-              style={{
-                color: isLiked ? 'blue' : 'gray',
-                fontWeight: isLiked ? 'bold' : 'normal',
-              }}
-            >
+            <Text className={isLiked ? 'text-blue-400 font-bold' : 'text-gray-400'}>
               Like ({likeCount})
             </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => toggleCommentSection(item.id)}>
-            <Text style={{ color: 'gray', fontWeight: 'bold' }}>Comment</Text>
+            <Text className={`font-bold ${isNightMode ? 'text-gray-400' : 'text-gray-500'}`}>
+              Comment
+            </Text>
           </TouchableOpacity>
         </View>
         {visibleCommentInputs[item.id] && (
@@ -177,30 +189,49 @@ const Posts = () => {
               data={item.comments}
               keyExtractor={(comment, index) => `${item.id}-comment-${index}`}
               renderItem={({ item: comment }) => (
-                <View className="flex-row items-center p-2 mt-2 bg-gray-200 rounded">
+                <View
+                  className={`flex-row items-center p-2 mt-2 rounded ${
+                    isNightMode ? 'bg-gray-700' : 'bg-gray-200'
+                  }`}
+                >
                   <Image
                     source={{ uri: comment.userPhotoURL }}
                     className="w-8 h-8 rounded-full mr-2"
                   />
                   <View>
-                    <Text className="text-sm font-semibold text-gray-800">{comment.userName}</Text>
-                    <Text className="text-xs text-gray-500">
+                    <Text
+                      className={`text-sm font-semibold ${
+                        isNightMode ? 'text-gray-200' : 'text-gray-800'
+                      }`}
+                    >
+                      {comment.userName}
+                    </Text>
+                    <Text className={`text-xs ${isNightMode ? 'text-gray-400' : 'text-gray-500'}`}>
                       {new Date(comment.createdAt).toLocaleString()}
                     </Text>
-                    <Text className="text-sm text-gray-800">{comment.text}</Text>
+                    <Text className={`text-sm ${isNightMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                      {comment.text}
+                    </Text>
                   </View>
                 </View>
               )}
             />
             <TextInput
-              className="p-2 border rounded mt-2"
+              className={`p-2 border rounded mt-2 ${
+                isNightMode ? 'border-gray-600 bg-gray-900 text-gray-200' : 'border-gray-300'
+              }`}
               placeholder="Write a comment..."
+              placeholderTextColor={isNightMode ? 'gray' : undefined}
               value={commentInput[item.id] || ''}
               onChangeText={(text) =>
                 setCommentInput((prevInput) => ({ ...prevInput, [item.id]: text }))
               }
             />
-            <Button title="Add Comment" onPress={() => handleAddComment(item.id)} />
+            <Button
+              title="Add Comment"
+              onPress={() => handleAddComment(item.id)}
+              color={isNightMode ? 'gray' : undefined}
+            />
           </View>
         )}
       </View>
@@ -208,22 +239,33 @@ const Posts = () => {
   };
 
   return (
-    <View className="flex-1 bg-white p-5">
+    <View className={`flex-1 p-5 ${isNightMode ? 'bg-gray-900' : 'bg-white'}`}>
       <View className="mb-5">
         <TextInput
-          className="p-2 border rounded"
+          className={`p-2 border rounded ${
+            isNightMode ? 'border-gray-600 bg-gray-800 text-gray-200' : 'border-gray-300'
+          }`}
           placeholder="What's on your mind?"
+          placeholderTextColor={isNightMode ? 'gray' : undefined}
           value={newPostContent}
           onChangeText={setNewPostContent}
         />
-        <Button title="Add Post" onPress={handleAddPost} />
+        <Button
+          title="Add Post"
+          onPress={handleAddPost}
+          color={isNightMode ? 'gray' : undefined}
+        />
       </View>
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id}
         renderItem={renderPost}
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<Text className="text-center text-gray-500">No posts yet.</Text>}
+        ListEmptyComponent={
+          <Text className={`text-center ${isNightMode ? 'text-gray-400' : 'text-gray-500'}`}>
+            No posts yet.
+          </Text>
+        }
       />
     </View>
   );

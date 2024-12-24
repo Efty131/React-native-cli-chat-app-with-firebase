@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  FlatList,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
+import { View, Text, TextInput, FlatList, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useSelector } from 'react-redux';
 
 const ChatDetails = ({ route, navigation }) => {
   const { user } = route.params; // The user being chatted with
   const [messages, setMessages] = useState([]);
+  const isNightMode = useSelector((state) => state.theme.isNightMode);
   const [input, setInput] = useState('');
   const currentUserUid = auth().currentUser?.uid; // Logged-in user's UID
   const chatId =
@@ -81,7 +75,7 @@ const ChatDetails = ({ route, navigation }) => {
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-white"
+      className={`flex-1 ${isNightMode ? 'bg-gray-800' : 'bg-white'}`}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       {/* Header */}
@@ -102,9 +96,9 @@ const ChatDetails = ({ route, navigation }) => {
       />
 
       {/* Input Bar */}
-      <View className="flex-row items-center bg-gray-100 p-4">
+      <View className={`flex-row items-center p-4 ${isNightMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
         <TextInput
-          className="flex-1 bg-white text-gray-700 px-4 py-2 rounded-full border border-gray-300"
+          className={`flex-1 px-4 py-2 rounded-full border border-green-700 ${isNightMode ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-700'}`}
           placeholder="Type a message..."
           value={input}
           placeholderTextColor="gray"
