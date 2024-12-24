@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, ThemeProvider } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import auth from '@react-native-firebase/auth';
 import "./global.css"
@@ -27,6 +27,7 @@ const App = () => {
   if (initializing) return null;
 
   return (
+    <ThemeProvider>
     <NavigationContainer>
       <StatusBar backgroundColor="rgba(0,0,0,0.2)" hidden={true} translucent={true} barStyle={'dark-content'} />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -40,6 +41,7 @@ const App = () => {
         )}
       </Stack.Navigator>
     </NavigationContainer>
+    </ThemeProvider>
   );
 };
 

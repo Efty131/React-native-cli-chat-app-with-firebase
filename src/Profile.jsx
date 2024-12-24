@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, TextInput, Alert, ActivityIndicator, Image } from 'react-native';
+import { View, Text, Button, TextInput, Alert, ActivityIndicator, Image, Switch } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -13,6 +13,7 @@ const Profile = () => {
   const [name, setName] = useState('');
   const [imageUri, setImageUri] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [isNightMode, setIsNightMode] = useState(false);
 
   useEffect(() => {
     const currentUser = auth().currentUser;
@@ -124,34 +125,53 @@ const Profile = () => {
       });
   };
 
+  // Theme-dependent styles
+  const containerStyle = isNightMode
+    ? 'flex-1 justify-center items-center p-5 bg-gray-900'
+    : 'flex-1 justify-center items-center p-5 bg-white';
+
+  const textStyle = isNightMode ? 'text-white' : 'text-black';
+
+  const inputStyle = isNightMode
+    ? 'w-full h-10 border-2 border-green-600 rounded-md p-2 mb-5 bg-gray-800 text-white'
+    : 'w-full h-10 border-2 border-green-600 rounded-md p-2 mb-5 bg-white text-black';
+
   return (
-    <View className="flex-1 justify-center items-center p-5 bg-white">
+    <View className={containerStyle}>
+      <View className="absolute top-10 right-10">
+        <Text className={`${textStyle} mb-2`}>Night Mode</Text>
+        <Switch
+          value={isNightMode}
+          onValueChange={setIsNightMode}
+          thumbColor={isNightMode ? 'green' : 'gray'}
+        />
+      </View>
       {user ? (
         <>
-          <Text className="text-3xl font-bold mb-5 text-green-600">Profile</Text>
+          <Text className={`text-3xl font-bold mb-5 ${isNightMode ? 'text-green-400' : 'text-green-600'}`}>Profile</Text>
           {isUploading ? (
             <ActivityIndicator size="large" color="green" />
           ) : imageUri ? (
             <Image source={{ uri: imageUri }} className="w-24 h-24 rounded-full mb-5" />
           ) : (
-            <Icon name="account-circle" size={100} color="gray" className="mb-5" />
+            <Icon name="account-circle" size={100} color={isNightMode ? 'white' : 'gray'} className="mb-5" />
           )}
           <Button title="Change Profile Picture" onPress={selectImage} />
-
-          <Text className="text-lg mb-2 text-orange-500">Email: {user.email}</Text>
+          <Text className={`text-lg mb-2 ${isNightMode ? 'text-orange-300' : 'text-orange-500'}`}>
+            Email: {user.email}
+          </Text>
           <TextInput
-            className="w-full h-10 border-2 border-green-600 rounded-md p-2 mb-5"
+            className={inputStyle}
             value={name}
             onChangeText={setName}
             placeholder="Enter your name"
-            placeholderTextColor='gray'
-            color='orange'
+            placeholderTextColor={isNightMode ? 'gray' : 'darkgray'}
           />
           <Button title="Update Profile" onPress={updateProfile} />
           <Button title="Logout" onPress={logout} className="mt-5" />
         </>
       ) : (
-        <Text className="text-xl text-red-500">You are not logged in</Text>
+        <Text className={`text-xl ${isNightMode ? 'text-red-300' : 'text-red-500'}`}>You are not logged in</Text>
       )}
     </View>
   );

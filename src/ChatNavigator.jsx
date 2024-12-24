@@ -4,7 +4,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons'; // For search icon
 
-const DiscoverNavigator = ({ navigation }) => {
+const ChatNavigator = ({ navigation }) => {
   const [users, setUsers] = useState([]); // All users
   const [filteredUsers, setFilteredUsers] = useState([]); // Filtered users
   const [searchQuery, setSearchQuery] = useState(''); // Search query
@@ -81,7 +81,7 @@ const DiscoverNavigator = ({ navigation }) => {
       </View>
 
       {/* Title */}
-      <Text className="text-2xl mb-5 font-bold text-green-700">Discover</Text>
+      <Text className="text-2xl mb-5 font-bold text-green-700">Chats</Text>
 
       {/* User List */}
       <FlatList
@@ -97,4 +97,4 @@ const DiscoverNavigator = ({ navigation }) => {
   );
 };
 
-export default DiscoverNavigator;
+export default ChatNavigator;

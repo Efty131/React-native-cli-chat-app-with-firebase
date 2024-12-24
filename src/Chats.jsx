@@ -1,28 +1,45 @@
-import { View, Text, StyleSheet } from 'react-native';
 import React from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { View, Text, Image } from 'react-native';
+import ChatNavigator from './ChatNavigator';
+import ChatDetails from './ChatDetails';
+
+const DiscoverStack = createNativeStackNavigator();
 
 const Chats = () => {
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Chats</Text>
-    </View>
+    <DiscoverStack.Navigator
+      screenOptions={{
+        headerShown: false, // Hide the header for DiscoverNavigator screens
+      }}
+    >
+      <DiscoverStack.Screen
+        name="ChatNavigator"
+        component={ChatNavigator}
+      />
+      <DiscoverStack.Screen
+        name="ChatDetails"
+        component={ChatDetails}
+        options={({ route }) => ({
+          headerShown: true, // Show the header for ChatDetails
+          headerTitle: () => (
+            <View className="flex-row items-center space-x-3">
+              <Image
+                source={{ uri: route.params.user.photoURL }}
+                className="w-10 h-10 rounded-full"
+              />
+              <Text className="text-lg font-bold text-gray-100 ml-2">{route.params.user.name}</Text>
+            </View>
+          ),
+          headerStyle: {
+            backgroundColor: '#15803d', // Header background color
+
+          },
+          headerTitleAlign: 'start', // Center-align the title
+        })}
+      />
+    </DiscoverStack.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-    fontWeight: 'bold',
-    color: 'green',
-  },
-});
 
 export default Chats;
