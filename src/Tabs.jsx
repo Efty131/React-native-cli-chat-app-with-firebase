@@ -1,6 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useSelector } from 'react-redux'; // Import useSelector to access Redux state
 import Profile from './Profile';
 import Posts from './Posts';
 import Chats from './Chats';
@@ -8,6 +9,9 @@ import Chats from './Chats';
 const Tab = createBottomTabNavigator();
 
 const Tabs = () => {
+  // Redux state for night mode
+  const isNightMode = useSelector((state) => state.theme.isNightMode);
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -25,10 +29,10 @@ const Tabs = () => {
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         headerShown: false,
-        tabBarActiveTintColor: '#008744',
-        tabBarInactiveTintColor: 'darkgray',
+        tabBarActiveTintColor: isNightMode ? '#fff' : '#008744', // Active color for night mode
+        tabBarInactiveTintColor: isNightMode ? 'darkgray' : 'gray', // Inactive color for night mode
         tabBarStyle: {
-          backgroundColor: '#ffffff',
+          backgroundColor: isNightMode ? '#1f1f1f' : '#ffffff', // Tab bar background color for night mode
         },
       })}
     >

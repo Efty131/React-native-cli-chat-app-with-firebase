@@ -1,20 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { StatusBar } from 'react-native';
-import { NavigationContainer, ThemeProvider } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { Provider, useSelector, useDispatch } from 'react-redux';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
 import auth from '@react-native-firebase/auth';
-import "./global.css"
+import './global.css';
 
 // Import Screens
 import Login from './src/Login';
 import Register from './src/Register';
 import Tabs from './src/Tabs'; // Import the Tabs component
 
+// Redux Slice for Theme
+const themeSlice = createSlice({
+  name: 'theme',
+  initialState: { isNightMode: false },
+  reducers: {
+    toggleNightMode: (state) => {
+      state.isNightMode = !state.isNightMode;
+    },
+  },
+});
+
+// Export Actions and Reducer
+const { toggleNightMode } = themeSlice.actions;
+const store = configureStore({
+  reducer: {
+    theme: themeSlice.reducer,
+  },
+});
+
+// App Component
 const Stack = createStackNavigator();
 
-const App = () => {
-  const [user, setUser] = useState(null);
-  const [initializing, setInitializing] = useState(true);
+const AppContent = () => {
+  const [user, setUser] = React.useState(null);
+  const [initializing, setInitializing] = React.useState(true);
+  const dispatch = useDispatch();
+  const isNightMode = useSelector((state) => state.theme.isNightMode);
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged((currentUser) => {
@@ -27,9 +51,13 @@ const App = () => {
   if (initializing) return null;
 
   return (
-    <ThemeProvider>
     <NavigationContainer>
-      <StatusBar backgroundColor="rgba(0,0,0,0.2)" hidden={true} translucent={true} barStyle={'dark-content'} />
+      <StatusBar
+        backgroundColor="rgba(0,0,0,0.2)"
+        hidden={true}
+        translucent={true}
+        barStyle={isNightMode ? 'light-content' : 'dark-content'}
+      />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {user ? (
           <Stack.Screen name="Tabs" component={Tabs} />
@@ -41,8 +69,14 @@ const App = () => {
         )}
       </Stack.Navigator>
     </NavigationContainer>
-    </ThemeProvider>
   );
 };
+
+// Main App
+const App = () => (
+  <Provider store={store}>
+    <AppContent />
+  </Provider>
+);
 
 export default App;

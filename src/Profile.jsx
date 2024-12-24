@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, TextInput, Alert, ActivityIndicator, Image, Switch } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleNightMode } from './redux/slice/themeSlice'; // Redux action
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -9,11 +11,13 @@ const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dreymbuhy/image/upload';
 const UPLOAD_PRESET = 'ReactNativeChatApp';
 
 const Profile = () => {
+  const dispatch = useDispatch();
+  const isNightMode = useSelector((state) => state.theme.isNightMode); // Fetch theme state from Redux
+
   const [user, setUser] = useState(null);
   const [name, setName] = useState('');
   const [imageUri, setImageUri] = useState('');
   const [isUploading, setIsUploading] = useState(false);
-  const [isNightMode, setIsNightMode] = useState(false);
 
   useEffect(() => {
     const currentUser = auth().currentUser;
@@ -70,7 +74,9 @@ const Profile = () => {
         console.log('ImagePicker Error: ', response.errorMessage);
       } else {
         const selectedImageUri = response.assets[0].uri;
-        const formattedUri = selectedImageUri.startsWith('file://') ? selectedImageUri : 'file://' + selectedImageUri;
+        const formattedUri = selectedImageUri.startsWith('file://')
+          ? selectedImageUri
+          : 'file://' + selectedImageUri;
 
         try {
           setIsUploading(true);
@@ -142,7 +148,7 @@ const Profile = () => {
         <Text className={`${textStyle} mb-2`}>Night Mode</Text>
         <Switch
           value={isNightMode}
-          onValueChange={setIsNightMode}
+          onValueChange={() => dispatch(toggleNightMode())} // Dispatch toggle action
           thumbColor={isNightMode ? 'green' : 'gray'}
         />
       </View>

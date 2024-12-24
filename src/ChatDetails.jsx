@@ -74,7 +74,7 @@ const ChatDetails = ({ route, navigation }) => {
           isSender ? 'self-end bg-green-600' : 'self-start bg-blue-600'
         }`}
       >
-        <Text className="text-base">{item.text}</Text>
+        <Text className="text-base text-white">{item.text}</Text>
       </View>
     );
   };
